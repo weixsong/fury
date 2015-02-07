@@ -1,7 +1,7 @@
 public class Percolation {
 
 	private int N;
-	private boolean[][] matrix;
+	private boolean[] grid;
 	private WeightedQuickUnionUF uf;
 	private WeightedQuickUnionUF uf2; // used to stop backwash
 	private int virtualTop;
@@ -13,11 +13,9 @@ public class Percolation {
 		}
 		
 		this.N = n;
-		matrix = new boolean[N][N];
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				matrix[i][j] = false;
-			}
+		grid = new boolean[N * N];
+		for (int i = 0; i < N * N; i++) {
+			grid[i] = false;
 		}
 
 		uf = new WeightedQuickUnionUF(N * N + 2);
@@ -38,39 +36,28 @@ public class Percolation {
 		indiceValidate(i);
 		indiceValidate(j);
 
-		if (this.matrix[i][j] == true) {
+		int p = xyTo1D(i, j);
+		if (this.grid[p] == true) {
 			return;
 		}
 
-		this.matrix[i][j] = true; // mark open
-		int p = xyTo1D(i, j);
+		this.grid[p] = true; // mark open
+
 		if (i > 0) {
-			if (this.matrix[i - 1][j] == true) {
-				int q = this.xyTo1D(i - 1, j);
-				uf.union(p, q);
-				uf2.union(p, q);
-			}
+			int q = xyTo1D(i - 1, j);
+			connect(p, q);
 		}
 		if (i < N - 1) {
-			if (this.matrix[i + 1][j] == true) {
-				int q = this.xyTo1D(i + 1, j);
-				uf.union(p, q);
-				uf2.union(p, q);
-			}
+			int q = this.xyTo1D(i + 1, j);
+			connect(p, q);
 		}
 		if (j > 0) {
-			if (this.matrix[i][j - 1] == true) {
-				int q = this.xyTo1D(i, j - 1);
-				uf.union(p, q);
-				uf2.union(p, q);
-			}
+			int q = this.xyTo1D(i, j - 1);
+			connect(p, q);
 		}
 		if (j < N - 1) {
-			if (this.matrix[i][j + 1] == true) {
-				int q = this.xyTo1D(i, j + 1);
-				uf.union(p, q);
-				uf2.union(p, q);
-			}
+			int q = this.xyTo1D(i, j + 1);
+			connect(p, q);
 		}
 		
 		if (i == 0) {
@@ -79,6 +66,13 @@ public class Percolation {
 		}
 		if (i == N - 1) {
 			uf.union(p, virtualBottom);
+		}
+	}
+	
+	private void connect(int from, int to) {
+		if (this.grid[to] == true) {
+			uf.union(from, to);
+			uf2.union(from, to);
 		}
 	}
 
@@ -94,7 +88,8 @@ public class Percolation {
 		j = j - 1;
 		indiceValidate(i);
 		indiceValidate(j);
-		return this.matrix[i][j] == true;
+		int p = this.xyTo1D(i, j);
+		return this.grid[p] == true;
 	}
 
 	/**
@@ -109,7 +104,8 @@ public class Percolation {
 		j = j - 1;
 		indiceValidate(i);
 		indiceValidate(j);
-		if (this.matrix[i][j] == false) {
+		int p = this.xyTo1D(i, j);
+		if (this.grid[p] == false) {
 			return false;
 		}
 		int q = xyTo1D(i, j);
