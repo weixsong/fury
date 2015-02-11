@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -29,14 +28,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 			resize(2 * q.length);
 		}
 		q[last++] = item;
+		// warp-around
 		if (last == q.length) {
 			last = 0;
 		}
 		N++;
 	}
 
-    private void resize(int max) {
-        Item[] temp = (Item[]) new Object[max];
+    private void resize(int size) {
+        Item[] temp = (Item[]) new Object[size];
         for (int i = 0; i < N; i++) {
             temp[i] = q[(first + i) % q.length];
         }
@@ -63,8 +63,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		N--;
 		if (N == 0) {
 			first = last = 0;
-		}
-		if (N > 0 && N == q.length / 4) {
+		} else if (N > 0 && N == q.length / 4) {
 			resize(q.length / 2);
 		}
 		return ret;
@@ -85,7 +84,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	}
 
 	private class RandomizedQueueIterator implements Iterator<Item> {
-		private int iteratorKey;
+		private int currentSize;
 		private int i = 0;
 		Item[] r;
 		public RandomizedQueueIterator() {
@@ -96,11 +95,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 				r[k] = q[id];
 			}
 			StdRandom.shuffle(r);
-			iteratorKey = N;
+			currentSize = N;
 		}
 
         public boolean hasNext() {
-        	if (iteratorKey != N) {
+        	if (currentSize != N) {
         		throw new ConcurrentModificationException();
         	}
         	return i < N;

@@ -8,11 +8,11 @@ public class Deque<Item> implements Iterable<Item> {
 	private Node last;
 	private int N;
 
-    private class Node {
-        private Item item;
-        private Node next;
-        private Node prev;
-    }
+	private class Node {
+		private Item item;
+		private Node next;
+		private Node prev;
+	}
 
 	public Deque() {
 		first = null;
@@ -21,7 +21,7 @@ public class Deque<Item> implements Iterable<Item> {
 	}
 
 	public boolean isEmpty() {
-		return first == null;
+		return N == 0;
 	}
 
 	public int size() {
@@ -36,7 +36,7 @@ public class Deque<Item> implements Iterable<Item> {
 		node.item = item;
 		node.next = first;
 		node.prev = null;
-		
+
 		if (first == null) {
 			first = node;
 			last = node;
@@ -69,8 +69,8 @@ public class Deque<Item> implements Iterable<Item> {
 		if (first == null) {
 			throw new NoSuchElementException();
 		}
-		Node n = first;
-		Item item = n.item;
+		Node node = first;
+		Item item = node.item;
 		N--;
 		if (N == 0) {
 			first = last = null;
@@ -78,17 +78,16 @@ public class Deque<Item> implements Iterable<Item> {
 			first = first.next;
 			first.prev = null;
 		}
-		n.prev = null; // sw
-		n.next = null; // sw
-		//n = null;
+		node.next = null;
 		return item;
 	}
+
 	public Item removeLast() {
 		if (last == null) {
 			throw new NoSuchElementException();
 		}
-		Node n = last;
-		Item item = n.item;
+		Node node = last;
+		Item item = node.item;
 		N--;
 		if (N == 0) {
 			first = last = null;
@@ -96,9 +95,7 @@ public class Deque<Item> implements Iterable<Item> {
 			last = last.prev;
 			last.next = null;
 		}
-		n.prev = null; // sw
-		n.next = null; // sw
-		//n = null;
+		node.prev = null;
 		return item;
 	}
 
@@ -108,32 +105,39 @@ public class Deque<Item> implements Iterable<Item> {
 	}
 
 	private class DequeIterator implements Iterator<Item> {
-        private Node current;
+		private Node current;
 
-    	public DequeIterator(Node first) {
-    		current = first;
-    	}
+		public DequeIterator(Node first) {
+			current = first;
+		}
 
-        public boolean hasNext()  { return current != null;                     }
-        public void remove()      { throw new UnsupportedOperationException();  }
+		public boolean hasNext() {
+			return current != null;
+		}
 
-        private int num = N;
-        public Item next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            int num2 = N;
-            if (num != num2) {
-            	throw new ConcurrentModificationException();
-            }
-            Item item = current.item;
-            current = current.next; 
-            return item;
-        }
-    }
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		private int originalSize = N;
+
+		public Item next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			int currentSize = N;
+			if (originalSize != currentSize) {
+				throw new ConcurrentModificationException();
+			}
+			Item item = current.item;
+			current = current.next;
+			return item;
+		}
+	}
 
 	public static void main(String[] args) {
 		Deque<String> dq = new Deque<String>();
 		dq.addFirst("sw1");
-		//dq.removeLast();
+		// dq.removeLast();
 		dq.addLast("sw2");
 		dq.removeFirst();
 		dq.addFirst("sw3");
