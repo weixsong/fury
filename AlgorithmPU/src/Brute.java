@@ -17,20 +17,17 @@ public class Brute {
 		   i++;
 	   }
 	   
-	   for (i = 0; i < n; i++) {
-		   for (int j = i + 1; j < n; j++) {
-			   if (j == i) continue;
+	   for (i = 0; i < n - 3; i++) {
+		   for (int j = i + 1; j < n - 2; j++) {
 			   double slope_ij = points[j].slopeTo(points[i]);
 			   
-			   for (int k = j + 1; k < n; k++) {
-				   if (k == j || k == i) continue;
-				   double slope_jk = points[k].slopeTo(points[j]);
-				   if (slope_ij != slope_jk) continue;
+			   for (int k = j + 1; k < n - 1; k++) {
+				   double slope_ik = points[k].slopeTo(points[i]);
+				   if (slope_ij != slope_ik) continue;
 				   
 				   for (int m = k + 1; m < n; m++) {
-					   if (m == i || m == j || m == k) continue;
-					   double slope_mk = points[m].slopeTo(points[k]);
-					   if (slope_mk == slope_jk) {
+					   double slope_im = points[m].slopeTo(points[i]);
+					   if (slope_im == slope_ij) {
 						   Point[] p = new Point[4];
 						   p[0] = points[i];
 						   p[1] = points[j];
