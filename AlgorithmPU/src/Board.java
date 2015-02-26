@@ -86,36 +86,36 @@ public class Board {
 	 * row
 	 */
 	public Board twin() {
-		Board t = new Board(this.blocks);
+		Board board = new Board(this.blocks);
 
 		int row = 0;
 		for (int i = 0; i < N; i++) {
-			boolean full = true;
+			boolean isFullRow = true;
 			for (int j = 0; j < N; j++) {
 				if (this.blocks[i][j] == 0) {
-					full = false;
+					isFullRow = false;
 					break;
 				}
 			}
-			if (full == true) {
+			if (isFullRow == true) {
 				row = i;
 				break;
 			}
 		}
-		int temp = t.blocks[row][0];
-		t.blocks[row][0] = t.blocks[row][1];
-		t.blocks[row][1] = temp;
-		return t;
+		int temp = board.blocks[row][0];
+		board.blocks[row][0] = board.blocks[row][1];
+		board.blocks[row][1] = temp;
+		return board;
 	}
 
 	/*
 	 * does this board equal y?
 	 */
 	public boolean equals(Object y) {
-		if (y == null)
-			return false;
 		if (y == this)
 			return true;
+		if (y == null)
+			return false;
 		if (y.getClass() != this.getClass())
 			return false;
 
@@ -216,24 +216,29 @@ public class Board {
 	}
 
 	/*
-	 * string representation of this board (in the output format specified
-	 * below)
+	 * string representation of this board
 	 */
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append(N + "\n");
+		StringBuilder sb = new StringBuilder();
+		sb.append(N);
+		sb.append("\n");
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				s.append(String.format("%2d ", blocks[i][j]));
+				sb.append(String.format("%3d", blocks[i][j]));
 			}
-			s.append("\n");
+			sb.append("\n");
 		}
-		return s.toString();
+		return sb.toString();
 	}
 
 	public static void main(String[] args) {
-		int N = 5;
-		int[][] blocks = new int[N][N];
-		System.out.println(blocks.length);
+	    In in = new In(args[0]);
+	    int N = in.readInt();
+	    int[][] blocks = new int[N][N];
+	    for (int i = 0; i < N; i++)
+	        for (int j = 0; j < N; j++)
+	            blocks[i][j] = in.readInt();
+	    Board board = new Board(blocks);
+	    System.out.println(board.toString());
 	}
 }
