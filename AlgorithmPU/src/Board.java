@@ -56,8 +56,8 @@ public class Board {
 					continue;
 				}
 				int number = this.blocks[i][j];
-				int targetRow = (number - 1) / this.N;
-				int targetCol = (number - 1) % this.N;
+				int targetRow = (number - 1) / N;
+				int targetCol = (number - 1) % N;
 				int cost = Math.abs(targetRow - i) + Math.abs(targetCol - j);
 				count += cost;
 			}
@@ -69,21 +69,16 @@ public class Board {
 	 * is this board the goal board?
 	 */
 	public boolean isGoal() {
-		boolean flag = true;
-		int sum = this.N * this.N;
-		for (int i = 0; i < this.N; i++) {
-			for (int j = 0; j < this.N; j++) {
-				int goal = (i * this.N + j + 1) % sum;
-				if (this.blocks[i][j] != goal) {
-					flag = false;
-					break;
+		int sum = N * N;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				int goal = (i * N + j + 1) % sum;
+				if (blocks[i][j] != goal) {
+					return false;
 				}
 			}
-			if (flag == false) {
-				break;
-			}
 		}
-		return flag;
+		return true;
 	}
 
 	/*
