@@ -31,8 +31,6 @@ public class Solver {
 		}
 	}
 
-	private int insertNum = 0;
-
 	private MinPQ<Node> pq = null;
 	private MinPQ<Node> pq2 = null;
 
@@ -50,12 +48,10 @@ public class Solver {
 
 		Node node = new Node(initial, null);
 		pq.insert(node);
-		insertNum++;
 
 		Board twin = initial.twin();
 		Node node2 = new Node(twin, null);
 		pq2.insert(node2);
-		insertNum++;
 
 		while (!pq.isEmpty() && !pq2.isEmpty()) {
 			current = pq.delMin();
@@ -74,10 +70,8 @@ public class Solver {
 				Node n = new Node(b, current);
 				if (current.pre == null) {
 					pq.insert(n);
-					insertNum++;
 				} else if (!current.pre.board.equals(b)) {
 					pq.insert(n);
-					insertNum++;
 				}
 			}
 
@@ -85,10 +79,8 @@ public class Solver {
 				Node n = new Node(b, current2);
 				if (current2.pre == null) {
 					pq2.insert(n);
-					insertNum++;
 				} else if (!current2.pre.board.equals(b)) {
 					pq2.insert(n);
-					insertNum++;
 				}
 			}
 		}
@@ -142,6 +134,5 @@ public class Solver {
 			for (Board board : solver.solution())
 				StdOut.println(board);
 		}
-		System.out.println(solver.insertNum);
 	}
 }
