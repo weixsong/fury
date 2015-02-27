@@ -142,10 +142,13 @@ public class Board {
 		int count = 0;
 		int row = 0;
 		int col = 0;
+		// search 0
+		boolean find = false;
 		for (int i = 0; i < N; i++) {
-			boolean find = false;
+			find = false;
 			for (int j = 0; j < N; j++) {
 				if (this.blocks[i][j] == 0) {
+					find = true;
 					row = i;
 					col = j;
 					break;
@@ -189,7 +192,7 @@ public class Board {
 			b[i] = neighbors.dequeue();
 		}
 
-		Queue<Board> results = new Queue<Board>();
+		// sort by manhattan
 		for (int i = 0; i < count; i++) {
 			int small = i;
 			for (int j = i + 1; j < count; j++) {
@@ -202,6 +205,7 @@ public class Board {
 			b[small] = temp;
 		}
 
+		Queue<Board> results = new Queue<Board>();
 		for (int i = 0; i < count; i++) {
 			results.enqueue(b[i]);
 		}
