@@ -64,21 +64,30 @@ Theta2_grad = zeros(size(Theta2));
 
 
 % Part 1
-h2 = sigmoid([ones(m, 1) X] * Theta1');
-h3 = sigmoid([ones(m, 1) h2] * Theta2');
-predict = h3;
+a2 = sigmoid([ones(m, 1) X] * Theta1');
+a3 = sigmoid([ones(m, 1) a2] * Theta2');
+predict = a3;
+
+% vectorize y
+vy = zeros(m, num_labels);
+for i = 1 : m
+    vy(i, y(i)) = 1;
+end
+
+cost = -vy .* log(predict) - (1 - vy) .* log(1 - predict);
+cost = sum(cost(:));
 
 % 可以用矩阵运算
 % 修改矩阵运算, 就算是用矩阵运算，也要构造y的矩阵，还是需要循环操作
-cost = 0;
-for i = 1 : m
-	xi = predict(i, :)';
-	yi = zeros(num_labels, 1);
-	yi(y(i)) = 1;
+%cost = 0;
+%for i = 1 : m
+%	xi = predict(i, :)';
+%	yi = zeros(num_labels, 1);
+%	yi(y(i)) = 1;
 
-	temp = sum( -yi .* log(xi) - (1 - yi) .* log(1 - xi) );
-	cost = cost + temp;
-end
+%	temp = sum( -yi .* log(xi) - (1 - yi) .* log(1 - xi) );
+%	cost = cost + temp;
+%end
 
 J = 1 / m * cost;
 
