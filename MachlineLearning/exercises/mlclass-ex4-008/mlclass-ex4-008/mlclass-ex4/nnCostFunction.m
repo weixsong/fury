@@ -63,22 +63,60 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
+% Part 1
+h2 = sigmoid([ones(m, 1) X] * Theta1');
+h3 = sigmoid([ones(m, 1) h2] * Theta2');
+predict = h3;
 
+% 可以用矩阵运算
+% 修改矩阵运算, 就算是用矩阵运算，也要构造y的矩阵，还是需要循环操作
+cost = 0;
+for i = 1 : m
+	xi = predict(i, :)';
+	yi = zeros(num_labels, 1);
+	yi(y(i)) = 1;
 
+	temp = sum( -yi .* log(xi) - (1 - yi) .* log(1 - xi) );
+	cost = cost + temp;
+end
 
+J = 1 / m * cost;
 
+reg = sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2));
+J = J + lambda / (2 * m) * reg;
 
+% part 2
+tri1 = zeros(size(Theta1));
+tri2 = zeros(size(Theta2));
+for i = 1 : m
+	xi = X(i, :);
+	yi = zeros(num_labels, 1);
+	yi(y(i)) = 1;
 
+	% step 1
+	a1 = [1 xi]';
+	a2 = sigmoid(Theta1 * a1);
+	a2 = [1; a2];
+	a3 = sigmoid(Theta2 * a2);
 
+	% step 2
+	sigma3 = a3 - yi;
 
+	% step 3
+	sigma2 = Theta2' * sigma3 .* (a2 .* (1 - a2));
 
+	% step 4
+	tri1 = tri1 + sigma2(2:end) * a1';
+	tri2 = tri2 + sigma3 * a2';
+end
 
+Theta1_grad(:, 1) = 1 / m * tri1(:, 1);
+Theta1_grad(:, 2:end) = 1 / m * tri1(:, 2:end) + lambda / m * Theta1(:, 2:end);
 
+Theta2_grad(:, 1) = 1 / m * tri2(:, 1);
+Theta2_grad(:, 2:end) = 1 / m * tri2(:, 2:end) + lambda / m * Theta2(:, 2:end);
 
-
-
-
-
+grad = [Theta1_grad(:); Theta2_grad(:)];
 
 % -------------------------------------------------------------
 
