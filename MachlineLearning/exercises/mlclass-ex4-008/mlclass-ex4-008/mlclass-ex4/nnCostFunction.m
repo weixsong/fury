@@ -64,8 +64,10 @@ Theta2_grad = zeros(size(Theta2));
 
 
 % Part 1
-a2 = sigmoid([ones(m, 1) X] * Theta1');
-a3 = sigmoid([ones(m, 1) a2] * Theta2');
+X = [ones(m, 1) X];
+a2 = sigmoid(X * Theta1');
+a2 = [ones(m, 1) a2];
+a3 = sigmoid(a2 * Theta2');
 predict = a3;
 
 % vectorize y
@@ -95,30 +97,42 @@ J = 1 / m * cost;
 reg = sum((Theta1(:, 2:end) .^ 2)(:)) + sum((Theta2(:, 2:end) .^ 2)(:));
 J = J + lambda / (2 * m) * reg;
 
-% part 2
+%% vectorize part 2
 tri1 = zeros(size(Theta1));
 tri2 = zeros(size(Theta2));
-for i = 1 : m
-	xi = X(i, :);
-	yi = zeros(num_labels, 1);
-	yi(y(i)) = 1;
 
-	% step 1
-	a1 = [1 xi]';
-	a2 = sigmoid(Theta1 * a1);
-	a2 = [1; a2];
-	a3 = sigmoid(Theta2 * a2);
+% step 1 is already done
 
-	% step 2
-	sigma3 = a3 - yi;
+% step 2
+sigma3 = a3 - vy;
+sigma2 = sigma3 * Theta2 .* (a2 .* (1 - a2));
+tri1 = tri1 + (sigma2(:, 2:end))' * X;
+tri2 = tri2 + (sigma3)' * a2;
 
-	% step 3
-	sigma2 = Theta2' * sigma3 .* (a2 .* (1 - a2));
-
-	% step 4
-	tri1 = tri1 + sigma2(2:end) * a1';
-	tri2 = tri2 + sigma3 * a2';
-end
+% part 2
+%tri1 = zeros(size(Theta1));
+%tri2 = zeros(size(Theta2));
+%for i = 1 : m
+%	xi = X(i, :);
+%	yi = zeros(num_labels, 1);
+%	yi(y(i)) = 1;
+%
+%	% step 1
+%	a1 = [1 xi]';
+%	a2 = sigmoid(Theta1 * a1);
+%	a2 = [1; a2];
+%	a3 = sigmoid(Theta2 * a2);
+%
+%	% step 2
+%	sigma3 = a3 - yi;
+%
+%	% step 3
+%	sigma2 = Theta2' * sigma3 .* (a2 .* (1 - a2));
+%
+%	% step 4
+%	tri1 = tri1 + sigma2(2:end) * a1';
+%	tri2 = tri2 + sigma3 * a2';
+%end
 
 Theta1_grad(:, 1) = 1 / m * tri1(:, 1);
 Theta1_grad(:, 2:end) = 1 / m * tri1(:, 2:end) + lambda / m * Theta1(:, 2:end);
