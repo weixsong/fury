@@ -36,21 +36,29 @@ public class PointSET {
 	
     // draw all points to standard draw
 	public void draw() {
-		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
-			iter.next().draw();
+		for (Point2D point : set) {
+			point.draw();
 		}
+//		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
+//			iter.next().draw();
+//		}
 	}
 	
     // all points that are inside the rectangle 
 	public Iterable<Point2D> range(RectHV rect) {
 		//Point2D[] points = (Point2D[])set.toArray();
 		Queue<Point2D> queue = new Queue<Point2D>();
-		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
-			Point2D p = iter.next();
-			if (rect.contains(p)) {
-				queue.enqueue(p);
+		for (Point2D point : set) {
+			if (rect.contains(point)) {
+				queue.enqueue(point);
 			}
 		}
+//		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
+//			Point2D p = iter.next();
+//			if (rect.contains(p)) {
+//				queue.enqueue(p);
+//			}
+//		}
 		
 		return queue;
 	}
