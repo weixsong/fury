@@ -1,13 +1,14 @@
 
 public class KdTree {
 	
-	private static class Node {
+	private class Node {
 		private Point2D p;      // the point
 		private RectHV rect;    // the axis-aligned rectangle corresponding to this node
 		private Node lb;        // the left/bottom subtree
 		private Node rt;        // the right/top subtree
 		
 		public Node(Point2D point, RectHV Rect, Node lb, Node rt) {
+			N++;
 			this.p = point;
 			this.rect = Rect;
 			this.lb = lb;
@@ -37,7 +38,7 @@ public class KdTree {
 	// add the point to the set (if it is not already in the set)
 	public void insert(Point2D p) {
 		if (p == null) {
-			return;
+			throw new java.lang.NullPointerException();
 		}
 		
     	// BST already contains this point
@@ -50,16 +51,17 @@ public class KdTree {
 	
     private Node put(Node x, Point2D p, boolean direction, double xmin, double ymin, double xmax, double ymax) {
     	if (x == null) {
-    		this.N++;
     		RectHV rect = new RectHV(xmin, ymin, xmax, ymax);
     		return new Node(p, rect, null, null);
     	}
     	
     	int cmp;
     	if (direction == VERTICAL) {
-    		cmp = Point2D.X_ORDER.compare(p, x.p);
+    		cmp = xOrderComparator(p, x.p);
+    		//cmp = Point2D.X_ORDER.compare(p, x.p);
     	} else {
-    		cmp = Point2D.Y_ORDER.compare(p, x.p);
+    		cmp = yOrderComparator(p, x.p);
+    		//cmp = Point2D.Y_ORDER.compare(p, x.p);
     	}
     	
     	if (cmp < 0) {
@@ -101,13 +103,19 @@ public class KdTree {
         
     	int cmp;
     	if (direction == VERTICAL) {
-    		cmp = Point2D.X_ORDER.compare(key, x.p);
+    		cmp = xOrderComparator(key, x.p);
+    		//cmp = Point2D.X_ORDER.compare(key, x.p);
     	} else {
-    		cmp = Point2D.Y_ORDER.compare(key, x.p);
+    		cmp = yOrderComparator(key, x.p);
+    		//cmp = Point2D.Y_ORDER.compare(key, x.p);
     	}
     	
-        if (cmp < 0) return get(x.lb, key, !direction);
-        else return get(x.rt, key, !direction);
+        if (cmp < 0) {
+        	return get(x.lb, key, !direction);
+        }
+        else {
+        	return get(x.rt, key, !direction);
+        }
     }
 	
     // draw all points to standard draw
@@ -141,39 +149,36 @@ public class KdTree {
 		drawPoints(x.rt);
 	}
 	
-	private Queue<Point2D> queue;
     // all points that are inside the rectangle 
 	public Iterable<Point2D> range(RectHV rect) {
-		queue = new Queue<Point2D>();
 		if (rect == null) {
-			return queue;
+			throw new java.lang.NullPointerException();
 		}
+		Queue<Point2D> queue = new Queue<Point2D>();
 		
 		rangePoint(rect, queue);
 		return queue;
 	}
-	
+
 	private void rangePoint(RectHV rect, Queue<Point2D> queue) {
 		range(root, rect, queue);
 	}
-	
+
 	private void range(Node x, RectHV rect, Queue<Point2D> queue) {
 		if (x == null) return;
 		if (x.rect.intersects(rect)) {
 			if (rect.contains(x.p)) {
 				queue.enqueue(x.p);
 			}
-		}
-		
-		if (x.lb != null && rect.intersects(x.lb.rect)) {
+
 			range(x.lb, rect, queue);
-		}
-		
-		if (x.rt != null && rect.intersects(x.rt.rect)) {
 			range(x.rt, rect, queue);
+			
+		} else {
+			return;
 		}
 	}
-	
+
     // a nearest neighbor in the set to point p; null if the set is empty 
 	public Point2D nearest(Point2D p) {
 		if (p == null || this.isEmpty()) {
@@ -202,9 +207,11 @@ public class KdTree {
 		
     	int cmp;
     	if (direction == VERTICAL) {
-    		cmp = Point2D.X_ORDER.compare(p, x.p);
+    		cmp = xOrderComparator(p, x.p);
+    		//cmp = Point2D.X_ORDER.compare(p, x.p);
     	} else {
-    		cmp = Point2D.Y_ORDER.compare(p, x.p);
+    		cmp = yOrderComparator(p, x.p);
+    		//cmp = Point2D.Y_ORDER.compare(p, x.p);
     	}
 		
     	if (cmp < 0) {
@@ -219,6 +226,18 @@ public class KdTree {
 		
 		return nearestP;
 	}
+	
+	private int xOrderComparator(Point2D p, Point2D q) {
+        if (p.x() < q.x()) return -1;
+        if (p.x() > q.x()) return +1;
+        return 0;
+	}
+	
+	private int yOrderComparator(Point2D p, Point2D q) {
+        if (p.y() < q.y()) return -1;
+        if (p.y() > q.y()) return +1;
+        return 0;
+	}
 
     // unit testing of the methods (optional) 
 	public static void main(String[] args) {
@@ -228,6 +247,7 @@ public class KdTree {
 		tree.insert(new Point2D(0.2, 0.3));
 		tree.insert(new Point2D(0.4, 0.7));
 		tree.insert(new Point2D(0.9, 0.6));
+		System.out.println(tree.size());
 		
 		System.out.println(tree.contains(new Point2D(0.1, 0.6)));
 		System.out.println(tree.contains(new Point2D(0.9, 0.6)));
