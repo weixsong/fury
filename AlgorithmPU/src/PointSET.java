@@ -22,8 +22,9 @@ public class PointSET {
 	// add the point to the set (if it is not already in the set)
 	public void insert(Point2D p) {
 		if (p == null) {
-			return;
+			throw new java.lang.NullPointerException();
 		}
+
 		if (!this.contains(p)) {
 			set.add(p);
 		}
@@ -31,6 +32,10 @@ public class PointSET {
 	
     // does the set contain point p? 
 	public boolean contains(Point2D p) {
+		if (p == null) {
+			throw new java.lang.NullPointerException();
+		}
+
 		return set.contains(p);
 	}
 	
@@ -39,26 +44,20 @@ public class PointSET {
 		for (Point2D point : set) {
 			point.draw();
 		}
-//		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
-//			iter.next().draw();
-//		}
 	}
 	
     // all points that are inside the rectangle 
 	public Iterable<Point2D> range(RectHV rect) {
-		//Point2D[] points = (Point2D[])set.toArray();
+		if (rect == null) {
+			throw new java.lang.NullPointerException();
+		}
+
 		Queue<Point2D> queue = new Queue<Point2D>();
 		for (Point2D point : set) {
 			if (rect.contains(point)) {
 				queue.enqueue(point);
 			}
 		}
-//		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
-//			Point2D p = iter.next();
-//			if (rect.contains(p)) {
-//				queue.enqueue(p);
-//			}
-//		}
 		
 		return queue;
 	}
@@ -66,7 +65,7 @@ public class PointSET {
     // a nearest neighbor in the set to point p; null if the set is empty 
 	public Point2D nearest(Point2D p) {
 		if (p == null) {
-			return null;
+			throw new java.lang.NullPointerException();
 		}
 		
 		if (this.isEmpty()) {
@@ -76,10 +75,8 @@ public class PointSET {
 		Point2D nearest = set.first();
 		double shortestDist = Double.MAX_VALUE;
 		
-		for (Iterator<Point2D> iter = set.iterator(); iter.hasNext(); ) {
-			Point2D point = iter.next();
+		for (Point2D point : set) {
 			double distance = p.distanceTo(point);
-			
 			if (distance < shortestDist) {
 				shortestDist = distance;
 				nearest = point;
@@ -91,6 +88,6 @@ public class PointSET {
 
     // unit testing of the methods (optional) 
 	public static void main(String[] args) {
-		
+		//
 	}
 }
