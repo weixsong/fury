@@ -29,7 +29,7 @@ public class PointSET {
 			set.add(p);
 		}
 	}
-	
+
     // does the set contain point p? 
 	public boolean contains(Point2D p) {
 		if (p == null) {
@@ -38,14 +38,14 @@ public class PointSET {
 
 		return set.contains(p);
 	}
-	
+
     // draw all points to standard draw
 	public void draw() {
 		for (Point2D point : set) {
 			point.draw();
 		}
 	}
-	
+
     // all points that are inside the rectangle 
 	public Iterable<Point2D> range(RectHV rect) {
 		if (rect == null) {
