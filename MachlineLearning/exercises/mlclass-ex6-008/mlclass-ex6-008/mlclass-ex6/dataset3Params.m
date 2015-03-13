@@ -23,7 +23,30 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+range = [0.01 0.03 0.1 0.3 1 3 10 30];
+err = 1;
+opt_c = range(1);
+opt_sigma = range(1);
 
+for i = 1:length(range)
+	c = range(i);
+	for j = 1:length(range)
+		sigma = range(j);
+		% train model
+		model = svmTrain(X, y, c, @(x1, x2) gaussianKernel(x1, x2, sigma));
+		% predict
+		predictions = svmPredict(model, Xval);
+		suberr = mean(double(predictions ~= yval));
+		if suberr < err
+			err = suberr;
+			opt_c = c;
+			opt_sigma = sigma;
+		end
+	end
+end
+
+C = opt_c;
+sigma = opt_sigma;
 
 
 
